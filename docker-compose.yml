@@ -1,0 +1,152 @@
+version: '3.4'
+
+networks:
+  backend:
+
+volumes:
+  yattmongodbdata:
+  rabbitmqdata:
+
+services:
+  yattmongodb:
+    container_name: yatt-mongodb
+    image: mongo
+    ports:
+      - 19001:27017
+    networks:
+      - backend
+    volumes:
+      - yattmongodbdata:/data/yattdb
+
+  #rabbitmq:
+  #  image: rabbitmq:3-management-alpine
+  #  container_name: rabbitmq
+  #  ports:
+  #    - 5672:5672
+  #    - 15672:15672
+  #  volumes:
+  #    - rabbitmqdata:/var/lib/rabbitmq
+  #  hostname: rabbitmq
+    #environment:
+    #  - RABBITMQ_DEFAULT_USER:guest
+    #  - RABBITMQ_DEFAULT_PASS:guest
+    #  - RABBITMQ_DEFAULT_VHOST:/
+
+  languageservice:
+    container_name: language-service
+    image: ${DOCKER_REGISTRY-}languageservice
+    build:
+      context: .
+      dockerfile: LanguageService/Dockerfile
+    ports:
+      - 19002:80  
+    depends_on:
+      - yattmongodb
+    networks:
+      - backend
+
+  membershipservice:
+    container_name: membership-service
+    image: ${DOCKER_REGISTRY-}membershipservice
+    build:
+      context: .
+      dockerfile: MembershipService/Dockerfile
+    ports:
+      - 19003:80  
+    depends_on:
+      - yattmongodb
+    networks:
+      - backend
+
+  catagoryservice:
+    container_name: catagory-service
+    image: ${DOCKER_REGISTRY-}catagoryservice
+    build:
+      context: .
+      dockerfile: CatagoryService/Dockerfile
+    ports:
+      - 19004:80  
+    depends_on:
+      - yattmongodb
+    networks:
+      - backend
+
+  identityservice:
+    container_name: identity-service
+    image: ${DOCKER_REGISTRY-}identityservice
+    build:
+      context: .
+      dockerfile: IdentityService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+      - 19005:80  
+    networks:
+      - backend
+   
+  candidateservice:
+    container_name: candidate-service
+    image: ${DOCKER_REGISTRY-}candidateservice
+    build:
+      context: .
+      dockerfile: CandidateService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+      - 19006:80  
+    networks:
+      - backend
+
+  companyservice:
+    container_name: company-service
+    image: ${DOCKER_REGISTRY-}companyservice
+    build:
+      context: .
+      dockerfile: CompanyService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+       -  19007:80 
+    networks:
+      - backend
+
+  subscriptionservice:
+    container_name: subscription-service
+    image: ${DOCKER_REGISTRY-}subscriptionservice
+    build:
+      context: .
+      dockerfile: SubscriptionService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+      - 19008:80  
+    networks:
+      - backend
+
+  jobservice:
+    container_name: job-service
+    image: ${DOCKER_REGISTRY-}jobservice
+    build:
+      context: .
+      dockerfile: JobService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+      - 19009:80  
+    networks:
+      - backend
+
+  applicantservice:
+    container_name: applicant-service
+    image: ${DOCKER_REGISTRY-}applicantservice
+    build:
+      context: .
+      dockerfile: ApplicantService/Dockerfile
+    depends_on:
+      - yattmongodb
+    ports:
+      - 19010:80  
+    networks:
+      - backend
+
+ 
